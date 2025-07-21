@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Heart Failure Prediction App</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 6px 24px rgba(33, 79, 131, 0.12);
+            background: #fff;
+        }
+        h2.mb-3 {
+            color: #295083;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: 700;
+        }
+        label {
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .btn-primary {
+            background: #295083;
+            border: none;
+            font-size: 1.05em;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background: #1a3356;
+        }
+        .alert {
+            border-radius: 7px;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 2px #95bbda55;
+        }
+        footer {
+            margin-top: 36px;
+            color: #6a7a91;
+            font-size: 0.93em;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <div class="card p-4">
+        <h2 class="mb-3">Heart Failure Prediction</h2>
+        {% if error_msg %}
+            <div class="alert alert-danger">{{ error_msg }}</div>
+        {% endif %}
+        <form method="POST" action="/">
+            {% for f in feature_names %}
+                <div class="form-group">
+                    {% if f == 'sex' %}
+                        <label for="sex">Sex <span class="text-muted small">(0 = Female, 1 = Male)</span></label>
+                        <select class="form-control" id="sex" name="sex" required>
+                            <option value="" disabled selected>Select Sex</option>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    {% else %}
+                        <label for="{{ f }}">
+                            {{ f.replace('_',' ').title() }}
+                            {% if f in ['anaemia','diabetes','high_blood_pressure','smoking'] %}
+                                <span class="text-muted small">(0 = No, 1 = Yes)</span>
+                            {% endif %}
+                        </label>
+                        <input type="number" step="any" class="form-control" id="{{ f }}" name="{{ f }}" required>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </form>
+        {% if result %}
+            <div class="alert alert-success mt-4">
+                <h4 class="alert-heading">{{ result }}</h4>
+                {% if probability %}
+                <p>Prediction confidence (probability of death event): 
+                    <strong>{{ (probability*100) | round(1) }}%</strong>
+                </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <footer class="text-center mt-4 text-muted small">
+        Powered by Flask • Customized by [Your Name or Team]
+    </footer>
+</div>
+</body>
+</html>
